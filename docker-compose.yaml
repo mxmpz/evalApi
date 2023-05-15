@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  #La web API (node)
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./api:/usr/src/app:rw
+    container_name: ${PROJECT_NAME}-api
+    command: "nodemon --legacy-watch ./bin/www"
+    ports:
+      - ${HOST_PORT_API}:3000
+      
+  # La base de données relationnelle (ici SGBD MySQL)
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./db:/var/lib/mysql
+    ports:
+      - ${HOST_PORT_DB}:3306
+    container_name: ${PROJECT_NAME}-mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    container_name: ${PROJECT_NAME}-adminer
+    ports:
+      - ${HOST_PORT_ADMINER}:8080

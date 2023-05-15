@@ -1,0 +1,4 @@
+api/node_modules
+db
+.env
+api/swagger_output.json
